@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32929.385
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkatingLogAPI", "SkatingLogAPI\SkatingLogAPI.csproj", "{EEC1F943-D2AB-4F0B-926B-51B34B0EE79F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EEC1F943-D2AB-4F0B-926B-51B34B0EE79F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EEC1F943-D2AB-4F0B-926B-51B34B0EE79F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EEC1F943-D2AB-4F0B-926B-51B34B0EE79F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EEC1F943-D2AB-4F0B-926B-51B34B0EE79F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9703392D-B2CC-4206-9342-56BA9CB62576}
+	EndGlobalSection
+EndGlobal
