@@ -2,3 +2,6 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
+/SkatingLogAPI/SkatingLogAPI/bin/Debug/net6.0
+/SkatingLogAPI/SkatingLogAPI/obj
+/SkatingLogAPI/.vs
