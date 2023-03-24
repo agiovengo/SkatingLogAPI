@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SkatingLogAPI.Contexts;
-using SkatingLogAPI.Models;
+using SkatingLogAPI.Infrastructure.Models;
+using System.Data.Entity;
 
 namespace SkatingLogAPI.Controllers
 {
@@ -8,36 +9,28 @@ namespace SkatingLogAPI.Controllers
     [Route("[controller]")]
     public class SkateLogController : ControllerBase
     {
-        private SkatingLogDBContext dbContext = new SkatingLogDBContext();
+        private SkatingLogDBContext _dbContext;
+        private readonly ILogger<SkateLogController> _logger;
 
-        private static readonly SkatingLogEntry SampleEntry = new()
+        private SkatingLogEntry SampleEntry = new()
         {
             EntryDateTime = DateTime.Now,
             StartDateTime = DateTime.Now.AddMinutes(-60),
             StopDateTime = DateTime.Now,
-            EntryClassificationId = 1,
+            ClassificationId = 1,
+            SubclassId = 0,
             LocationId = 1,
-            BasicDescription = "Skated for an hour",
+            BasicDescription = "Public Session",
+            DetailedDescription = "Skated for an hour",
             FreestyleLevel = 2,
             DanceLevel = 3,
-            DetailedDescriptions = new List<DetailedDescription>()
-            {
-                new DetailedDescription
-                {
-                    Description = "Testing Detailed Description"
-                },
-                new DetailedDescription
-                {
-                    Description = "Testing Detailed Description 2"
-                },
-            }
         };
 
-        private readonly ILogger<SkateLogController> _logger;
 
-        public SkateLogController(ILogger<SkateLogController> logger)
+        public SkateLogController(ILogger<SkateLogController> logger, SkatingLogDBContext dbContext)
         {
             _logger = logger;
+            _dbContext = dbContext;
         }
 
         [HttpPost(Name = "AddSampleSkatingLogEntry")]
@@ -46,12 +39,13 @@ namespace SkatingLogAPI.Controllers
             try
             {
                 // Add the new entry to the database
-                dbContext.SkatingLogEntries.Add(SampleEntry);
-                dbContext.SaveChanges();
+                _dbContext.SkatingLogEntries.Add(SampleEntry);
+                _dbContext.SaveChanges();
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return false;
             }
         }
@@ -59,24 +53,33 @@ namespace SkatingLogAPI.Controllers
         [HttpGet(Name = "GetSkatingLogEntries")]
         public List<SkatingLogEntry> GetSkatingLogEntries()
         {
-            // Get all entries from the database
-            var entries = dbContext.SkatingLogEntries.ToList();
-            foreach (var entry in entries)
+            try
             {
-                Console.WriteLine("Entry ID: " + entry.EntryId);
-                Console.WriteLine("Entry Date Time: " + entry.EntryDateTime);
-                Console.WriteLine("Start Date Time: " + entry.StartDateTime);
-                Console.WriteLine("Stop Date Time: " + entry.StopDateTime);
-                Console.WriteLine("Entry Classification ID: " + entry.EntryClassificationId);
-                Console.WriteLine("Location ID: " + entry.LocationId);
-                Console.WriteLine("Basic Description: " + entry.BasicDescription);
-                Console.WriteLine("Freestyle Level: " + entry.FreestyleLevel);
-                Console.WriteLine("Dance Level: " + entry.DanceLevel);
-                Console.WriteLine("Total Time (minutes): " + entry.TotalTimeMinutes);
-                Console.WriteLine();
-            };
+                // Get all entries from the database
+                var entries = _dbContext.SkatingLogEntries.ToList();
+                foreach (var entry in entries)
+                {
+                    Console.WriteLine("Entry ID: " + entry.EntryId);
+                    Console.WriteLine("Entry Date Time: " + entry.EntryDateTime);
+                    Console.WriteLine("Start Date Time: " + entry.StartDateTime);
+                    Console.WriteLine("Stop Date Time: " + entry.StopDateTime);
+                    Console.WriteLine("Entry Classification ID: " + entry.ClassificationId);
+                    Console.WriteLine("Entry Subclass ID: " + entry.SubclassId);
+                    Console.WriteLine("Location ID: " + entry.LocationId);
+                    Console.WriteLine("Basic Description: " + entry.BasicDescription);
+                    Console.WriteLine("Freestyle Level: " + entry.FreestyleLevel);
+                    Console.WriteLine("Dance Level: " + entry.DanceLevel);
+                    Console.WriteLine("Total Time (minutes): " + entry.TotalTimeMinutes);
+                    Console.WriteLine();
+                };
 
-            return entries;
+                return entries;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
         }
     }
 }

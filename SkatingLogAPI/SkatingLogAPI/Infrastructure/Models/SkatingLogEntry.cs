@@ -1,4 +1,4 @@
-﻿namespace SkatingLogAPI.Models
+﻿namespace SkatingLogAPI.Infrastructure.Models
 {
     public class SkatingLogEntry
     {
@@ -6,12 +6,18 @@
         public DateTime EntryDateTime { get; set; }
         public DateTime StartDateTime { get; set; }
         public DateTime StopDateTime { get; set; }
-        public int EntryClassificationId { get; set; }
+        public int ClassificationId { get; set; }
+        public int SubclassId { get; set; }
         public int LocationId { get; set; }
-        public string BasicDescription { get; set; } = String.Empty;
+        public string BasicDescription { get; set; }
+        public string DetailedDescription { get; set; }
         public int FreestyleLevel { get; set; }
         public int DanceLevel { get; set; }
         public int TotalTimeMinutes { get; set; }
-        public virtual List<DetailedDescription> DetailedDescriptions { get; set; } = new List<DetailedDescription>();
+
+        public virtual Classification Classification { get; set; }
+        public virtual Subclass Subclass { get; set; }
+        public virtual Location Location { get; set; }
     }
+
 }

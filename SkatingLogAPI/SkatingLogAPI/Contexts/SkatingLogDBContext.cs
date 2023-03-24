@@ -1,32 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Data.Entity;
-using SkatingLogAPI.Models;
+﻿using SkatingLogAPI.Infrastructure.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace SkatingLogAPI.Contexts
 {
     public class SkatingLogDBContext : DbContext
     {
-        public DbSet<SkatingLogEntry> SkatingLogEntries { get; set; }
-        public DbSet<DetailedDescription> DetailedDescriptions { get; set; }
-
-        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        // ctor allows databaseoptions to inherit authentication setup from Program.cs
+        public SkatingLogDBContext(DbContextOptions<SkatingLogDBContext> options) : base(options)
         {
-            // Define the primary keys
-            modelBuilder.Entity<SkatingLogEntry>()
-                .HasKey(e => e.EntryId);
-            modelBuilder.Entity<DetailedDescription>()
-                .HasKey(e => e.DetailedDescriptionId);
 
-            // Define the foreign key constraint
-            modelBuilder.Entity<DetailedDescription>()
-                .HasRequired(e => e.SkatingLogEntry)
-                .WithMany(e => e.DetailedDescriptions)
-                .HasForeignKey(e => e.EntryId)
-                .WillCascadeOnDelete(false);
+        }
 
-            base.OnModelCreating(modelBuilder);
+        // Set Db prevents null
+        public DbSet<SkatingLogEntry> SkatingLogEntries { get; set; }
+        public DbSet<Classification> Classifications { get; set; }
+        public DbSet<Subclass> Subclasses { get; set; }
+        public DbSet<Location> Locations { get; set; }
+
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.HasDefaultSchema("dbo");
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(SkatingLogDBContext).Assembly);
         }
     }
 }
