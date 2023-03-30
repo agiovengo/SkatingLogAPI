@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SkatingLogAPI.Contexts;
+using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,17 @@ builder.Services.AddDbContext<SkatingLogDBContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SkatingLogDB")).EnableSensitiveDataLogging().EnableDetailedErrors());
        // options => options.EnableRetryOnFailure()));
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.SetIsOriginAllowedToAllowWildcardSubdomains();
+        policy.AllowAnyHeader();
+        policy.WithMethods(new[] { "GET", "POST" });
+        policy.WithOrigins("*");
+    });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -25,6 +37,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseCors();
 
 app.MapControllers();
 
