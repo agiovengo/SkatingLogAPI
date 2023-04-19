@@ -33,7 +33,31 @@ namespace SkatingLogAPI.Controllers
             _dbContext = dbContext;
         }
 
-        [HttpPost(Name = "AddSampleSkatingLogEntry")]
+        [HttpPost]
+        [ActionName("AddSkatingLogEntry")]
+        [Route("[action]")]
+        //[Route("AddSkatingLogEntry")]
+        public bool AddSkatingLogEntry(SkatingLogEntry skatingLogEntry)
+        {
+            // TODO: Add data Validation here
+
+            try
+            {
+                // Add the new entry to the database
+                _dbContext.SkatingLogEntries.Add(skatingLogEntry);
+                _dbContext.SaveChanges();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
+            }
+        }
+
+        [HttpPost]
+        [ActionName("AddSampleSkatingLogEntry")]
+        [Route("[action]")]
         public bool AddSampleSkatingLogEntry()
         {
             try
