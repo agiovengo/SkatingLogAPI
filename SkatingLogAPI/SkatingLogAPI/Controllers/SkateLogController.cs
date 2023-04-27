@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SkatingLogAPI.Contexts;
 using SkatingLogAPI.Infrastructure.Models;
+using SkatingLogAPI.Infrastructure.Repositories;
 using System.Data.Entity;
 
 namespace SkatingLogAPI.Controllers
@@ -9,28 +10,16 @@ namespace SkatingLogAPI.Controllers
     [Route("[controller]")]
     public class SkateLogController : ControllerBase
     {
-        private SkatingLogDBContext _dbContext;
-        private readonly ILogger<SkateLogController> _logger;
-
-        private SkatingLogEntry SampleEntry = new()
-        {
-            EntryDateTime = DateTime.Now,
-            StartDateTime = DateTime.Now.AddMinutes(-60),
-            StopDateTime = DateTime.Now,
-            ClassificationId = 1,
-            SubclassId = 0,
-            LocationId = 1,
-            BasicDescription = "Public Session",
-            DetailedDescription = "Skated for an hour",
-            FreestyleLevel = 2,
-            DanceLevel = 3,
-        };
-
+        private SkatingLogDBContext dbContext;
+        private readonly ILogger<SkateLogController> logger;
+        private readonly SkateLogRepository repository;
 
         public SkateLogController(ILogger<SkateLogController> logger, SkatingLogDBContext dbContext)
         {
-            _logger = logger;
-            _dbContext = dbContext;
+            this.logger = logger;
+            this.dbContext = dbContext;
+
+            repository = new SkateLogRepository(dbContext);
         }
 
         [HttpPost]
@@ -44,8 +33,8 @@ namespace SkatingLogAPI.Controllers
             try
             {
                 // Add the new entry to the database
-                _dbContext.SkatingLogEntries.Add(skatingLogEntry);
-                _dbContext.SaveChanges();
+                dbContext.SkatingLogEntries.Add(skatingLogEntry);
+                dbContext.SaveChanges();
                 return true;
             }
             catch (Exception ex)
@@ -63,8 +52,8 @@ namespace SkatingLogAPI.Controllers
             try
             {
                 // Add the new entry to the database
-                _dbContext.SkatingLogEntries.Add(SampleEntry);
-                _dbContext.SaveChanges();
+                dbContext.SkatingLogEntries.Add(repository.SampleEntry);
+                dbContext.SaveChanges();
                 return true;
             }
             catch (Exception ex)
@@ -74,27 +63,18 @@ namespace SkatingLogAPI.Controllers
             }
         }
 
-        [HttpGet(Name = "GetSkatingLogEntries")]
+        [HttpGet]
+        [ActionName("GetSkatingLogEntries")]
+        [Route("[action]")]
         public List<SkatingLogEntry> GetSkatingLogEntries()
         {
             try
             {
                 // Get all entries from the database
-                var entries = _dbContext.SkatingLogEntries.ToList();
+                var entries = dbContext.SkatingLogEntries.ToList();
                 foreach (var entry in entries)
                 {
-                    Console.WriteLine("Entry ID: " + entry.EntryId);
-                    Console.WriteLine("Entry Date Time: " + entry.EntryDateTime);
-                    Console.WriteLine("Start Date Time: " + entry.StartDateTime);
-                    Console.WriteLine("Stop Date Time: " + entry.StopDateTime);
-                    Console.WriteLine("Entry Classification ID: " + entry.ClassificationId);
-                    Console.WriteLine("Entry Subclass ID: " + entry.SubclassId);
-                    Console.WriteLine("Location ID: " + entry.LocationId);
-                    Console.WriteLine("Basic Description: " + entry.BasicDescription);
-                    Console.WriteLine("Freestyle Level: " + entry.FreestyleLevel);
-                    Console.WriteLine("Dance Level: " + entry.DanceLevel);
-                    Console.WriteLine("Total Time (minutes): " + entry.TotalTimeMinutes);
-                    Console.WriteLine();
+                    repository.DebugEntry(entry);
                 };
 
                 return entries;
@@ -102,7 +82,61 @@ namespace SkatingLogAPI.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return null;
+                throw;
+            }
+        }
+
+        [HttpGet]
+        [ActionName("GetLocations")]
+        [Route("[action]")]
+        public List<Location> GetLocations()
+        {
+            try
+            {
+                // Get all entries from the database
+                var locations = dbContext.Locations.ToList();
+                return locations;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+        }
+
+        [HttpGet]
+        [ActionName("GetClassifications")]
+        [Route("[action]")]
+        public List<Classification> GetClassifications()
+        {
+            try
+            {
+                // Get all entries from the database
+                var classifications = dbContext.Classifications.ToList();
+                return classifications;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+        }
+
+        [HttpGet]
+        [ActionName("GetSubclasses")]
+        [Route("[action]")]
+        public List<Subclass> GetSubclasses()
+        {
+            try
+            {
+                // Get all entries from the database
+                var subclasses = dbContext.Subclasses.ToList();
+                return subclasses;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
             }
         }
     }
