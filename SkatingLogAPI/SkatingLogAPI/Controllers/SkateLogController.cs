@@ -10,11 +10,11 @@ namespace SkatingLogAPI.Controllers
     [Route("[controller]")]
     public class SkateLogController : ControllerBase
     {
-        private SkatingLogDBContext dbContext;
+        private dBContext dbContext;
         private readonly ILogger<SkateLogController> logger;
         private readonly SkateLogRepository repository;
 
-        public SkateLogController(ILogger<SkateLogController> logger, SkatingLogDBContext dbContext)
+        public SkateLogController(ILogger<SkateLogController> logger, dBContext dbContext)
         {
             this.logger = logger;
             this.dbContext = dbContext;
@@ -25,15 +25,15 @@ namespace SkatingLogAPI.Controllers
         [HttpPost]
         [ActionName("AddSkatingLogEntry")]
         [Route("[action]")]
-        //[Route("AddSkatingLogEntry")]
-        public bool AddSkatingLogEntry(SkatingLogEntry skatingLogEntry)
+        public bool AddSkatingLogEntry(LogEntry skatingLogEntry)
         {
             // TODO: Add data Validation here
 
             try
             {
                 // Add the new entry to the database
-                dbContext.SkatingLogEntries.Add(skatingLogEntry);
+                skatingLogEntry.CreatedDateTime = DateTime.Now;
+                dbContext.LogEntries.Add(skatingLogEntry);
                 dbContext.SaveChanges();
                 return true;
             }
@@ -44,38 +44,38 @@ namespace SkatingLogAPI.Controllers
             }
         }
 
-        [HttpPost]
-        [ActionName("AddSampleSkatingLogEntry")]
-        [Route("[action]")]
-        public bool AddSampleSkatingLogEntry()
-        {
-            try
-            {
-                // Add the new entry to the database
-                dbContext.SkatingLogEntries.Add(repository.SampleEntry);
-                dbContext.SaveChanges();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return false;
-            }
-        }
+        //[HttpPost]
+        //[ActionName("AddSampleSkatingLogEntry")]
+        //[Route("[action]")]
+        //public bool AddSampleSkatingLogEntry()
+        //{
+        //    try
+        //    {
+        //        // Add the new entry to the database
+        //        dbContext.SkatingLogEntries.Add(repository.SampleEntry);
+        //        dbContext.SaveChanges();
+        //        return true;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine(ex.Message);
+        //        return false;
+        //    }
+        //}
 
         [HttpGet]
         [ActionName("GetSkatingLogEntries")]
         [Route("[action]")]
-        public List<SkatingLogEntry> GetSkatingLogEntries()
+        public List<LogEntry> GetSkatingLogEntries()
         {
             try
             {
                 // Get all entries from the database
-                var entries = dbContext.SkatingLogEntries.ToList();
-                foreach (var entry in entries)
-                {
-                    repository.DebugEntry(entry);
-                };
+                var entries = dbContext.LogEntries.ToList();
+                //foreach (var entry in entries)
+                //{
+                //    repository.DebugEntry(entry);
+                //};
 
                 return entries;
             }
@@ -105,15 +105,15 @@ namespace SkatingLogAPI.Controllers
         }
 
         [HttpGet]
-        [ActionName("GetClassifications")]
+        [ActionName("GetSubclasses")]
         [Route("[action]")]
-        public List<Classification> GetClassifications()
+        public List<RecordType> GetSubclasses()
         {
             try
             {
                 // Get all entries from the database
-                var classifications = dbContext.Classifications.ToList();
-                return classifications;
+                var subclasses = dbContext.RecordTypes.ToList();
+                return subclasses;
             }
             catch (Exception ex)
             {
@@ -123,15 +123,15 @@ namespace SkatingLogAPI.Controllers
         }
 
         [HttpGet]
-        [ActionName("GetSubclasses")]
+        [ActionName("GetListContainer")]
         [Route("[action]")]
-        public List<Subclass> GetSubclasses()
+        public ListContainer GetListContainer()
         {
             try
             {
                 // Get all entries from the database
-                var subclasses = dbContext.Subclasses.ToList();
-                return subclasses;
+                var listContainer = repository.GetListContainer();
+                return listContainer;
             }
             catch (Exception ex)
             {

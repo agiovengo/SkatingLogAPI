@@ -3,25 +3,25 @@ using Microsoft.EntityFrameworkCore;
 
 namespace SkatingLogAPI.Contexts
 {
-    public class SkatingLogDBContext : DbContext
+    public class dBContext : DbContext
     {
         // ctor allows databaseoptions to inherit authentication setup from Program.cs
-        public SkatingLogDBContext(DbContextOptions<SkatingLogDBContext> options) : base(options)
+        public dBContext(DbContextOptions<dBContext> options) : base(options)
         {
 
         }
 
         // Set Db prevents null
-        public DbSet<SkatingLogEntry> SkatingLogEntries { get; set; }
-        public DbSet<Classification> Classifications { get; set; }
-        public DbSet<Subclass> Subclasses { get; set; }
+        public DbSet<LogEntry> LogEntries { get; set; }
+        public DbSet<RecordType> RecordTypes { get; set; }
         public DbSet<Location> Locations { get; set; }
+        public DbSet<LevelState> LevelStates { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasDefaultSchema("dbo");
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(SkatingLogDBContext).Assembly);
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(dBContext).Assembly);
         }
     }
 }

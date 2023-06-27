@@ -4,11 +4,11 @@ using SkatingLogAPI.Infrastructure.Models;
 
 namespace SkatingLogAPI.Infrastructure.Configuration
 {
-    public class LocationConfiguration : IEntityTypeConfiguration<Location>
+    public class RecordTypeConfiguration : IEntityTypeConfiguration<RecordType>
     {
-        public void Configure(EntityTypeBuilder<Location> builder)
+        public void Configure(EntityTypeBuilder<RecordType> builder)
         {
-            builder.ToTable("lkLocations");
+            builder.ToTable("lkRecordTypes");
 
             builder.HasKey(ci => ci.Id);
             builder.Property(ci => ci.Id).HasColumnType("int").IsRequired();
