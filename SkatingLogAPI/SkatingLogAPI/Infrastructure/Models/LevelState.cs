@@ -8,6 +8,6 @@
         public string DanceLevel { get; set; } = String.Empty;
         public string PairsLevel { get; set; } = String.Empty;
 
-        public virtual ICollection<LogEntry> LogEntries { get; set; } = new List<LogEntry>();
+        public virtual ICollection<LogEntry> LogEntries { get; set; }
     }
 }

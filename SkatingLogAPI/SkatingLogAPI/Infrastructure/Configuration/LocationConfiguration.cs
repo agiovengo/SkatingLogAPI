@@ -12,7 +12,7 @@ namespace SkatingLogAPI.Infrastructure.Configuration
 
             builder.HasKey(ci => ci.Id);
             builder.Property(ci => ci.Id).HasColumnType("int").IsRequired();
-            builder.Property(ci => ci.Description).HasColumnType("varcar(50)").HasMaxLength(50).IsRequired();
+            builder.Property(ci => ci.Description).HasColumnType("varchar(50)").HasMaxLength(50).IsRequired();
         }
     }
 }

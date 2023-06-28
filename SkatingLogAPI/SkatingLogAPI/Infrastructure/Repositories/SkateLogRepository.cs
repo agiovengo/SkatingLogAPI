@@ -39,7 +39,7 @@ namespace SkatingLogAPI.Infrastructure.Repositories
 
         public ListContainer GetListContainer() {
             var locations = dbContext.Locations.ToList();
-            var levelStates = dbContext.LevelStates.ToList();
+            var levelStates = dbContext.LevelStates.OrderByDescending(l => l.Date).ToList();
             var subclasses = dbContext.RecordTypes.ToList();
 
             return new ListContainer { Locations = locations, LevelStates = levelStates, RecordTypes = subclasses };

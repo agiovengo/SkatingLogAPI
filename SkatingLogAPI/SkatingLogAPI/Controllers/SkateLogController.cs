@@ -23,17 +23,31 @@ namespace SkatingLogAPI.Controllers
         }
 
         [HttpPost]
-        [ActionName("AddSkatingLogEntry")]
+        [ActionName("AddLogEntry")]
         [Route("[action]")]
-        public bool AddSkatingLogEntry(LogEntry skatingLogEntry)
+        public bool AddLogEntry(AddLogEntry skatingLogEntry)
         {
             // TODO: Add data Validation here
 
             try
             {
                 // Add the new entry to the database
-                skatingLogEntry.CreatedDateTime = DateTime.Now;
-                dbContext.LogEntries.Add(skatingLogEntry);
+
+                var currentLevelStateId = dbContext.LevelStates.OrderByDescending(x => x.Date).FirstOrDefault()?.Id ?? 0;
+
+                LogEntry newLogEntry = new LogEntry {
+                    CreatedDateTime = DateTime.Now,
+                    BasicDescription = skatingLogEntry.BasicDescription,
+                    DetailedDescription = skatingLogEntry.DetailedDescription,
+                    IsOnIce = skatingLogEntry.IsOnIce,
+                    LocationId = skatingLogEntry.LocationId,
+                    LevelStateId = currentLevelStateId,
+                    RecordTypeId = skatingLogEntry.RecordTypeId,
+                    StartDateTime = skatingLogEntry.StartDateTime,
+                    StopDateTime = skatingLogEntry.StopDateTime
+                };
+
+                dbContext.LogEntries.Add(newLogEntry);
                 dbContext.SaveChanges();
                 return true;
             }
