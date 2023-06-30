@@ -16,7 +16,7 @@ namespace SkatingLogAPI.Contexts
         public DbSet<RecordType> RecordTypes { get; set; }
         public DbSet<Location> Locations { get; set; }
         public DbSet<LevelState> LevelStates { get; set; }
-
+        public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

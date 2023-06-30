@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SkatingLogAPI.Contexts;
+using SkatingLogAPI.Services;
 using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,7 +13,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<dBContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SkatingLogDB")).EnableSensitiveDataLogging().EnableDetailedErrors());
-       // options => options.EnableRetryOnFailure()));
+// options => options.EnableRetryOnFailure()));
+
+builder.Services.AddScoped<UserService>();
 
 builder.Services.AddCors(options =>
 {
