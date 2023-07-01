@@ -1,16 +1,23 @@
-﻿using SkatingLogAPI.Contexts;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using SkatingLogAPI.Contexts;
 using SkatingLogAPI.Infrastructure.Models;
 using System.Data.Entity;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace SkatingLogAPI.Services
 {
     public class UserService
     {
         private readonly dBContext context;
+        private readonly IConfiguration configuration;
 
-        public UserService(dBContext context)
+        public UserService(dBContext context, IConfiguration configuration)
         {
             this.context = context;
+            this.configuration = configuration;
         }
 
         public async Task<User> Register(UserRegistrationDto userRegistrationDto)
@@ -50,6 +57,19 @@ namespace SkatingLogAPI.Services
             }
         }
 
+        public async Task<User> Login(string username, string password)
+        {
+            var user = context.Users.FirstOrDefault(u => u.Username == username);
+
+            if (user == null)
+                return null;
+
+            if (!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
+                return null;
+
+            return user;
+        }
+
         private bool VerifyPasswordHash(string password, byte[] storedHash, byte[] storedSalt)
         {
             using (var hmac = new System.Security.Cryptography.HMACSHA512(storedSalt))
@@ -78,5 +98,25 @@ namespace SkatingLogAPI.Services
 
             return false;
         }
+
+        public string GenerateJwtToken(User user)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(configuration.GetSection("AppSettings:Token").Value);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Name, user.Username)
+                    // You can add more claims here if needed
+                }),
+                Expires = DateTime.Now.AddDays(1), // Token expiration, you can set it to whatever you want
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha512Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
+        }
+
     }
 }

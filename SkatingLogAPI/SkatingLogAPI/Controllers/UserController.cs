@@ -31,6 +31,21 @@ namespace SkatingLogAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpPost]
+        [ActionName("Login")]
+        [Route("[action]")]
+        public async Task<IActionResult> Login(UserLoginDto userLoginDto)
+        {
+            var userFromService = await _userService.Login(userLoginDto.Username.ToLower(), userLoginDto.Password);
+
+            if (userFromService == null)
+                return Unauthorized();
+
+            var token = _userService.GenerateJwtToken(userFromService);
+
+            return Ok(new { token });
+        }
     }
 
 }
