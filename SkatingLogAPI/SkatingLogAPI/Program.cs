@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SkatingLogAPI.Contexts;
+using SkatingLogAPI.Services;
 using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
