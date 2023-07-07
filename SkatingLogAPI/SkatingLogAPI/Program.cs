@@ -5,24 +5,20 @@ using System.Configuration;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<dBContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SkatingLogDB")).EnableSensitiveDataLogging().EnableDetailedErrors());
-       // options => options.EnableRetryOnFailure()));
+builder.Services.AddScoped<UserService>();
 
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(policy =>
-    {
-        policy.SetIsOriginAllowedToAllowWildcardSubdomains();
-        policy.AllowAnyHeader();
-        policy.WithMethods(new[] { "GET", "POST" });
-        policy.WithOrigins("*");
-    });
+    options.AddPolicy("CorsPolicy",
+        builder => builder.WithOrigins("https://agiovengo.github.io")
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials());
 });
 
 var app = builder.Build();
@@ -34,12 +30,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("CorsPolicy");
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
-
-app.UseCors();
-
 app.MapControllers();
 
 app.Run();
