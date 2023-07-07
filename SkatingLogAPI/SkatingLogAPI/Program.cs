@@ -16,7 +16,7 @@ builder.Services.AddScoped<UserService>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy",
-        builder => builder.WithOrigins("https://agiovengo.github.io")
+        builder => builder.WithOrigins("https://agiovengo.github.io", "http://localhost:4200")
         .AllowAnyMethod()
         .AllowAnyHeader()
         .AllowCredentials());
