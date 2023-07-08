@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SkatingLogAPI.Contexts;
 using SkatingLogAPI.Infrastructure.Models;
 using SkatingLogAPI.Infrastructure.Repositories;
@@ -151,6 +152,23 @@ namespace SkatingLogAPI.Controllers
             {
                 Console.WriteLine(ex.Message);
                 throw;
+            }
+        }
+
+        [HttpGet]
+        [ActionName("TestDbConnection")]
+        [Route("[action]")]
+        public IActionResult TestDbConnection()
+        {
+            try
+            {
+                this.dbContext.Database.OpenConnection();
+                this.dbContext.Database.CloseConnection();
+                return Ok("Connection to DB successful!");
+            }
+            catch (Exception ex)
+            {
+                return Problem("Connection to DB failed: " + ex.Message);
             }
         }
     }
