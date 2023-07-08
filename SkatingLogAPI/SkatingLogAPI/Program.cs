@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using SkatingLogAPI.Contexts;
 using SkatingLogAPI.Services;
 using System.Configuration;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<dBContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SkatingLogDB")).EnableSensitiveDataLogging().EnableDetailedErrors());
 builder.Services.AddScoped<UserService>();
+
+builder.Services.AddHealthChecks().AddDbContextCheck<dBContext>();
 
 builder.Services.AddCors(options =>
 {
@@ -36,5 +39,10 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapHealthChecks("/health");
+});
 
 app.Run();
