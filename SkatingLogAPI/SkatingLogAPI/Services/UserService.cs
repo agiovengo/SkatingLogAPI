@@ -107,8 +107,9 @@ namespace SkatingLogAPI.Services
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Name, user.Username)
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new Claim(ClaimTypes.Name, user.Username),
+                    new Claim(ClaimTypes.Role, user.Role)
                     // You can add more claims here if needed
                 }),
                 Expires = DateTime.Now.AddDays(1), // Token expiration, you can set it to whatever you want
